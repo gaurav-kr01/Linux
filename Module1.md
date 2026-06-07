@@ -1,0 +1,1 @@
+Linux core concept 
