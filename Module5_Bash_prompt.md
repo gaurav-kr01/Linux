@@ -1,144 +1,130 @@
-# Linux Commands Cheat Sheet
+# Linux Bash Prompt
 
 ---
 
-## Module - Linux Bash Prompt
+## Shell
 
-### What is Shell?
-
-> 💡 Shell = translator between YOU and Linux
-> 💡 bash, zsh, fish are just different types of shells
-
-| Shell | Location | Description |
-|-------|----------|-------------|
-| `bash` | `/bin/bash` | Most popular, default on Ubuntu |
-| `sh` | `/bin/sh` | Original shell, simpler |
-| `zsh` | `/bin/zsh` | Modern, used on Mac |
-| `fish` | `/bin/fish` | Beginner friendly |
+Shell is basically a translator between you and Linux. When you type a command, the shell understands it and tells Linux what to do. There are different types of shells like bash, zsh, fish — but bash is the most popular and default on Ubuntu.
 
 ```bash
-# Check current shell
+# Check your current shell
 echo $SHELL
 
-# Change default shell
+# Change your default shell
 chsh -s /bin/bash
 ```
 
-> ⚠️ Shell change only applies after logout and login again
+> 💡 Change only applies after logout and login again
 
 ---
 
-### Environment Variables
+## Environment Variables
 
-> 💡 Environment Variables = settings that Linux uses to configure itself
-> 💡 `export` = stores a VALUE
-> 💡 `$` before variable name = get its value
-
-| Command | Description |
-|---------|-------------|
-| `echo $VARIABLE` | Check a variable value |
-| `export VAR="value"` | Set variable (temporary) |
-| `echo 'export VAR="value"' >> ~/.profile` | Set variable (persistent) |
-| `source ~/.profile` | Apply changes immediately |
-| `env` | List ALL environment variables |
-
-**Common environment variables:**
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `HOME` | Home directory | `/home/gaurav` |
-| `USER` | Current username | `gaurav` |
-| `SHELL` | Current shell | `/bin/bash` |
-| `PATH` | Program locations | `/usr/bin:/bin` |
-| `TERM` | Terminal type | `xterm-256color` |
-
----
-
-### Aliases
-
-> 💡 `alias` = shortcut for a command
-> 💡 Avoid using existing command names for aliases
+Think of environment variables like settings on your phone — brightness, language, ringtone. Linux has similar settings stored as variables. For example, HOME stores your home directory, USER stores your username.
 
 ```bash
-# Create alias (temporary)
+# Check a variable
+echo $PROJECT
+
+# Set a variable (temporary - lost after logout)
+export PROJECT=MERCURY
+
+# Set a variable (permanent - stays after logout)
+echo 'export PROJECT=MERCURY' >> ~/.profile
+source ~/.profile
+
+# List all environment variables
+env
+```
+
+Common environment variables:
+
+| Variable | What it stores |
+|----------|---------------|
+| `HOME` | Your home directory |
+| `USER` | Your username |
+| `SHELL` | Your current shell |
+| `PATH` | Where Linux looks for programs |
+| `TERM` | Your terminal type |
+
+> 💡 Always use `$` before variable name to get its value
+> 💡 `export` is used to store a value in a variable
+
+---
+
+## Aliases
+
+Aliases are shortcuts for commands. Instead of typing a long command every time, you create a short name for it.
+
+```bash
+# Create an alias (temporary)
 alias up="uptime"
 
-# Create alias (persistent)
+# Create an alias (permanent)
 echo 'alias up="uptime"' >> ~/.profile
+source ~/.profile
 
-# Remove alias
+# Remove an alias
 unalias up
 ```
 
-**Useful aliases:**
+Some useful aliases to have:
 
-| Alias | Command | Description |
-|-------|---------|-------------|
+| Alias | Actual Command | What it does |
+|-------|---------------|--------------|
 | `ll` | `ls -l` | Detailed file list |
 | `cls` | `clear` | Clear screen |
-| `gs` | `git status` | Git status |
-| `ga` | `git add .` | Git add all |
-| `up` | `uptime` | System uptime |
+| `gs` | `git status` | Check git status |
+| `up` | `uptime` | Check system uptime |
+
+> 💡 `alias` is used for shortcuts, `export` is used for variables
 
 ---
 
-### Profile Files (Startup Scripts)
+## Profile Files
 
-> 💡 Profile files = startup settings that run automatically every login
-> 💡 Files starting with `.` are hidden files → use `ls -a` to see them
-> 💡 These are called dotfiles in DevOps world
+Profile files are like a startup checklist. Every time you login, Linux reads these files and sets everything up automatically — your variables, aliases, preferences — so you don't have to do it manually every time.
 
 | File | When it runs |
 |------|-------------|
-| `~/.profile` | Every login |
-| `~/.bash_profile` | Bash login shell |
-| `~/.bashrc` | Every time terminal opens |
+| `~/.profile` | Every time you login |
+| `~/.bashrc` | Every time you open a terminal |
+| `~/.bash_profile` | Bash login shell only |
 
 ```bash
-# Open profile file
+# Open and edit profile file
 nano ~/.profile
 
-# Apply changes immediately (without logout)
+# Apply changes without logout
 source ~/.profile
 
-# Check profile file
+# View profile file
 cat ~/.profile
 ```
 
-**What you can store in profile files:**
-
-```bash
-# Variables
-export PROJECT=MERCURY
-export MY_NAME=Gaurav
-
-# Aliases
-alias ll="ls -l"
-alias cls="clear"
-
-# Custom prompt
-export PS1="[\d]gaurav@Gaurav:\w$ "
-```
+> 💡 Files starting with `.` are hidden files in Linux
+> 💡 Use `ls -a` to see hidden files
+> 💡 These files are called dotfiles in the DevOps world
 
 ---
 
-### Custom Prompt (PS1)
+## Custom Prompt (PS1)
 
-> 💡 PS1 = Prompt String 1 = controls how terminal prompt looks
+PS1 controls how your terminal prompt looks. You can customize it to show date, username, hostname, current directory — whatever you want.
 
 ```bash
 # Set custom prompt
 export PS1="[\d]gaurav@Gaurav:\w$ "
 
-# Make it persistent
+# Make it permanent
 echo 'export PS1="[\d]gaurav@Gaurav:\w$ "' >> ~/.profile
 source ~/.profile
 ```
 
-**PS1 special characters:**
+PS1 special characters:
 
-| Character | Meaning | Example |
-|-----------|---------|---------|
+| Character | What it shows | Example |
+|-----------|--------------|---------|
 | `\d` | Date | `Wed Apr 22` |
 | `\t` | Time | `10:30:00` |
 | `\u` | Username | `gaurav` |
@@ -146,66 +132,73 @@ source ~/.profile
 | `\w` | Current directory | `~/documents` |
 | `\$` | $ for user, # for root | `$` |
 
+> 💡 PS1 = Prompt String 1
+
 ---
 
-### PATH Variable
+## PATH Variable
 
-> 💡 PATH = list of folders where Linux looks for programs
-> 💡 Without PATH you'd have to type full path every time
+PATH is a list of folders where Linux looks for programs. When you type `python3`, Linux searches through all PATH folders to find it. Without PATH you would have to type the full path every time like `/usr/bin/python3`.
 
 ```bash
-# Check PATH
+# Check your PATH
 echo $PATH
 
-# Add folder to PATH (persistent)
+# Add a new folder to PATH (permanent)
 echo 'export PATH=$PATH:/new/folder' >> ~/.profile
 source ~/.profile
 ```
 
-**Common PATH folders:**
+Common folders in PATH:
 
-| Folder | Contains |
-|--------|----------|
-| `/bin` | Basic commands (ls, cat, cp) |
-| `/sbin` | System commands (reboot, fdisk) |
-| `/usr/bin` | User programs (python, git) |
+| Folder | What it contains |
+|--------|-----------------|
+| `/bin` | Basic commands like ls, cat, cp |
+| `/sbin` | System commands like reboot, fdisk |
+| `/usr/bin` | User programs like python, git |
 | `/usr/local/bin` | Manually installed programs |
 
 ---
 
-### Quote Types
+## Quote Types
 
-> ⚠️ Always use single quotes `'` when adding to profile files
+This is very important when working with profile files and variables.
 
 | Quote | Usage | Example |
 |-------|-------|---------|
-| Single `'` | Plain text, no variable expansion | `echo 'hello $USER'` |
-| Double `"` | Allows variable expansion | `echo "hello $USER"` |
-| Backtick `` ` `` | Runs a command | `` echo `date` `` |
+| Single `'` | Plain text, no variable expansion | `echo 'hello $USER'` prints `hello $USER` |
+| Double `"` | Allows variable expansion | `echo "hello $USER"` prints `hello gaurav` |
+| Backtick `` ` `` | Runs a command inside | `` echo `date` `` prints current date |
+
+> ⚠️ Always use single quotes `'` when adding to `~/.profile`
+> ⚠️ Never use backticks when adding to profile files
 
 ---
 
-### Create Your Own Startup Script
+## Your Own Startup Script
+
+You can create your own script that loads automatically on every login — keeping all your variables and aliases in one clean place.
 
 ```bash
-# Step 1 - create script
+# Step 1 - create your script
 nano ~/.my_variables.sh
 
-# Step 2 - add your variables and aliases inside
+# Step 2 - add everything inside
 export PROJECT=MERCURY
 export MY_NAME=Gaurav
 alias ll="ls -l"
 alias cls="clear"
+alias gs="git status"
 
-# Step 3 - add to .profile
+# Step 3 - link it to .profile
 echo 'source ~/.my_variables.sh' >> ~/.profile
 
 # Step 4 - apply
 source ~/.profile
 ```
 
-> 💡 Push to GitHub as backup
-> 💡 Copy to any new server instantly — all settings ready!
-
+> 💡 Push this file to GitHub as a backup
+> 💡 Copy it to any new server and all your settings are ready instantly
+> 💡 This is exactly how DevOps engineers manage their environment on cloud servers
 
 ---
