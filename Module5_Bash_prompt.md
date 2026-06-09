@@ -196,9 +196,3 @@ echo 'source ~/.my_variables.sh' >> ~/.profile
 # Step 4 - apply
 source ~/.profile
 ```
-
-> 💡 Push this file to GitHub as a backup
-> 💡 Copy it to any new server and all your settings are ready instantly
-> 💡 This is exactly how DevOps engineers manage their environment on cloud servers
-
----
