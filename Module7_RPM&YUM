@@ -1,0 +1,272 @@
+# Linux RPM & YUM
+
+---
+
+## The Full Hierarchy
+
+Before learning commands, understand how everything connects:
+
+```
+Package Manager (YUM)
+        │
+        │ connects to
+        ↓
+  Repositories (Repolist)
+        │
+        │ contains
+        ↓
+    Packages (.rpm)
+        │
+        │ contains
+        ↓
+   Commands/Software
+   (tcpdump, wget, firefox)
+```
+
+**Package Manager** is the tool you use to manage everything — like a remote control. It connects to repositories, downloads packages and installs them.
+
+**Repository** is a server where packages are stored — like an App Store server. YUM connects to these servers to find and download software.
+
+**Package** is a file that contains the actual software — like an .exe file on Windows. It contains commands, settings and dependencies.
+
+**Commands/Software** are the actual tools you get after installing a package — the end result.
+
+---
+
+## RPM vs YUM — What is the Difference?
+
+RPM and YUM have the same relationship as DPKG and APT on Ubuntu.
+
+| Tool | Type | Can Download? | Handles Dependencies? |
+|------|------|--------------|----------------------|
+| `rpm` | Low level | ❌ No | ❌ No |
+| `yum` | High level | ✅ Yes | ✅ Yes |
+
+RPM works only with local files on disk — it cannot download anything and fails if dependencies are missing. YUM connects to the internet, downloads software and handles all dependencies automatically.
+
+Easy way to remember:
+- RPM uses **flags** like `-qa`, `-qi`, `-i` (old style, cryptic)
+- YUM uses **words** like `install`, `remove`, `list` (readable English)
+
+---
+
+## Which Distro Uses What?
+
+| Ubuntu/Debian | CentOS/RHEL | Can Download? | Handles Dependencies? |
+|--------------|-------------|--------------|----------------------|
+| `dpkg` | `rpm` | ❌ No | ❌ No |
+| `apt` | `yum` | ✅ Yes | ✅ Yes |
+
+---
+
+## RPM Commands
+
+```bash
+# Install a local .rpm file
+sudo rpm -i /home/bob/firefox-140.8.0.el9.x86_64.rpm
+
+# Check if a package is installed
+rpm -qa | grep wget
+
+# Check with case insensitive search
+rpm -qa | grep -i wget
+
+# Get info about an installed package
+rpm -qi firefox
+
+# Remove a package
+rpm -e firefox
+```
+
+RPM flags:
+
+| Flag | Meaning |
+|------|---------|
+| `-i` | Install |
+| `-q` | Query |
+| `-a` | All packages |
+| `-e` | Erase/Remove |
+| `-i` with `-q` | Info about package |
+
+> 💡 `-qa` = query all installed packages
+> 💡 Always use `grep -i` for case insensitive search
+
+---
+
+## YUM Commands
+
+### Install & Remove
+```bash
+# Install from internet
+sudo yum install firefox
+
+# Install from local .rpm file
+sudo yum install /home/bob/firefox-140.8.0.el9.x86_64.rpm
+
+# Remove a package
+sudo yum remove firefox
+
+# Update a package
+sudo yum update firefox
+
+# Update all packages
+sudo yum update
+```
+
+### Search & Query
+```bash
+# Search for a package
+yum search firefox
+
+# List all installed packages
+yum list installed
+
+# Check if specific package is installed
+yum list installed | grep wget
+
+# Find which package provides a command
+yum provides tcpdump
+
+# Check available package info
+yum info firefox
+```
+
+### Repository Commands
+```bash
+# List all configured repositories
+yum repolist
+
+# List all repos including disabled
+yum repolist all
+
+# Count number of repos
+yum repolist | tail -n +2 | wc -l
+
+# View repo config files
+ls /etc/yum.repos.d/
+cat /etc/yum.repos.d/*
+```
+
+---
+
+## What is `yum provides`?
+
+In Linux every command comes from a package. Sometimes the command name and package name are different.
+
+| Command | Package it comes from |
+|---------|----------------------|
+| `tcpdump` | `tcpdump` |
+| `ifconfig` | `net-tools` |
+| `python3` | `python3` |
+| `git` | `git` |
+
+```bash
+# Find which package provides a command
+yum provides tcpdump
+
+# Output:
+# tcpdump-4.99.0-6.el9.x86_64
+# Repo: baseos
+```
+
+> 💡 Use `yum provides` when you get `command not found` error
+> 💡 It tells you exactly which package to install to get that command
+
+---
+
+## Common Errors & Fixes
+
+### Error 1 — RPM Failed Dependencies
+```
+error: Failed dependencies:
+       mozilla-filesystem is needed
+       pciutils-libs is needed
+```
+**Fix — use YUM instead of RPM:**
+```bash
+# Wrong ❌
+sudo rpm -i /home/bob/firefox.rpm
+
+# Correct ✅
+sudo yum install /home/bob/firefox.rpm
+```
+> 💡 RPM cannot handle dependencies — always use YUM for installation
+
+---
+
+### Error 2 — File Not Found
+```
+error: open of /home/bob/firefox failed: No such file or directory
+```
+**Fix — always include full filename with extension:**
+```bash
+# Wrong ❌
+sudo rpm -i /home/bob/firefox
+
+# Correct ✅
+sudo rpm -i /home/bob/firefox-140.8.0.el9.x86_64.rpm
+```
+> 💡 Always run `ls /home/bob` first to check exact filename
+
+---
+
+### Error 3 — Wrong YUM flag
+```
+Command line error: argument -q/--quiet: ignored explicit argument 'a'
+```
+**Fix — `-qa` only works with RPM, not YUM:**
+```bash
+# Wrong ❌
+yum -qa | grep wget
+
+# Correct ✅
+yum list installed | grep wget
+```
+
+---
+
+## Counting with wc -l
+
+`wc` = Word Count command — but it counts more than just words.
+
+| Command | What it counts |
+|---------|---------------|
+| `wc -l` | Number of lines |
+| `wc -w` | Number of words |
+| `wc -c` | Number of characters |
+
+```bash
+# Count number of repos
+yum repolist | wc -l
+
+# Count accurately (skip header line)
+yum repolist | tail -n +2 | wc -l
+
+# Count files in a directory
+ls | wc -l
+
+# Count running processes
+ps aux | wc -l
+```
+
+> 💡 `wc -l` is the most used flag in DevOps
+> 💡 Whenever you need to count anything — pipe it to `wc -l`
+
+---
+
+## Quick Reference
+
+| Command | Description |
+|---------|-------------|
+| `rpm -qa \| grep <pkg>` | Check if package is installed |
+| `rpm -i <file.rpm>` | Install local rpm file |
+| `rpm -e <pkg>` | Remove package |
+| `sudo yum install <pkg>` | Install package |
+| `sudo yum remove <pkg>` | Remove package |
+| `sudo yum update` | Update all packages |
+| `yum list installed` | List installed packages |
+| `yum search <pkg>` | Search for package |
+| `yum provides <cmd>` | Find which package has command |
+| `yum repolist` | List all repositories |
+
+---
