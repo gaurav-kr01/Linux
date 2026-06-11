@@ -86,7 +86,7 @@ RPM flags:
 | `-q` | Query |
 | `-a` | All packages |
 | `-e` | Erase/Remove |
-| `-i` with `-q` | Info about package |
+| `-qi` | Info about package |
 
 > 💡 `-qa` = query all installed packages
 > 💡 Always use `grep -i` for case insensitive search
@@ -96,6 +96,7 @@ RPM flags:
 ## YUM Commands
 
 ### Install & Remove
+
 ```bash
 # Install from internet
 sudo yum install firefox
@@ -114,6 +115,7 @@ sudo yum update
 ```
 
 ### Search & Query
+
 ```bash
 # Search for a package
 yum search firefox
@@ -132,6 +134,7 @@ yum info firefox
 ```
 
 ### Repository Commands
+
 ```bash
 # List all configured repositories
 yum repolist
@@ -149,7 +152,7 @@ cat /etc/yum.repos.d/*
 
 ---
 
-## What is `yum provides`?
+## What is yum provides?
 
 In Linux every command comes from a package. Sometimes the command name and package name are different.
 
@@ -169,59 +172,8 @@ yum provides tcpdump
 # Repo: baseos
 ```
 
-> 💡 Use `yum provides` when you get `command not found` error
+> 💡 Use `yum provides` when you get command not found error
 > 💡 It tells you exactly which package to install to get that command
-
----
-
-## Common Errors & Fixes
-
-### Error 1 — RPM Failed Dependencies
-```
-error: Failed dependencies:
-       mozilla-filesystem is needed
-       pciutils-libs is needed
-```
-**Fix — use YUM instead of RPM:**
-```bash
-# Wrong ❌
-sudo rpm -i /home/bob/firefox.rpm
-
-# Correct ✅
-sudo yum install /home/bob/firefox.rpm
-```
-> 💡 RPM cannot handle dependencies — always use YUM for installation
-
----
-
-### Error 2 — File Not Found
-```
-error: open of /home/bob/firefox failed: No such file or directory
-```
-**Fix — always include full filename with extension:**
-```bash
-# Wrong ❌
-sudo rpm -i /home/bob/firefox
-
-# Correct ✅
-sudo rpm -i /home/bob/firefox-140.8.0.el9.x86_64.rpm
-```
-> 💡 Always run `ls /home/bob` first to check exact filename
-
----
-
-### Error 3 — Wrong YUM flag
-```
-Command line error: argument -q/--quiet: ignored explicit argument 'a'
-```
-**Fix — `-qa` only works with RPM, not YUM:**
-```bash
-# Wrong ❌
-yum -qa | grep wget
-
-# Correct ✅
-yum list installed | grep wget
-```
 
 ---
 
@@ -254,6 +206,68 @@ ps aux | wc -l
 
 ---
 
+## Common Errors & Fixes
+
+### Error 1 — RPM Failed Dependencies
+
+```
+error: Failed dependencies:
+       mozilla-filesystem is needed
+       pciutils-libs is needed
+```
+
+Fix — use YUM instead of RPM:
+
+```bash
+# Wrong
+sudo rpm -i /home/bob/firefox.rpm
+
+# Correct
+sudo yum install /home/bob/firefox.rpm
+```
+
+> 💡 RPM cannot handle dependencies — always use YUM for installation
+
+---
+
+### Error 2 — File Not Found
+
+```
+error: open of /home/bob/firefox failed: No such file or directory
+```
+
+Fix — always include full filename with extension:
+
+```bash
+# Wrong
+sudo rpm -i /home/bob/firefox
+
+# Correct
+sudo rpm -i /home/bob/firefox-140.8.0.el9.x86_64.rpm
+```
+
+> 💡 Always run ls /home/bob first to check exact filename
+
+---
+
+### Error 3 — Wrong YUM flag
+
+```
+Command line error: argument -q/--quiet: ignored explicit argument 'a'
+```
+
+Fix — `-qa` only works with RPM not YUM:
+
+```bash
+# Wrong
+yum -qa | grep wget
+
+# Correct
+yum list installed | grep wget
+```
+
+---
+
 ## Quick Reference
 
 | Command | Description |
@@ -268,5 +282,3 @@ ps aux | wc -l
 | `yum search <pkg>` | Search for package |
 | `yum provides <cmd>` | Find which package has command |
 | `yum repolist` | List all repositories |
-
----
